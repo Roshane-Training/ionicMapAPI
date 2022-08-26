@@ -5,15 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
 
 import { HomePageRoutingModule } from './home-routing.module';
-
+import { GoogleMapsComponent } from '../components/google-maps/google-maps.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    HomePageRoutingModule
-  ],
-  declarations: [HomePage]
+	imports: [CommonModule, FormsModule, IonicModule, HomePageRoutingModule],
+	declarations: [HomePage, GoogleMapsComponent],
 })
 export class HomePageModule {}
