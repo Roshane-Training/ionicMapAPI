@@ -6,10 +6,7 @@ import { AfterViewInit, Component, NgZone, OnInit } from '@angular/core';
 	styleUrls: ['./google-maps.component.scss'],
 })
 export class GoogleMapsComponent implements OnInit, AfterViewInit {
-	map: google.maps.Map = new google.maps.Map(
-		document.getElementById('map') as HTMLElement,
-		{ center: { lat: 0, lng: 0 }, zoom: 10 }
-	);
+	map!: google.maps.Map;
 	center: google.maps.LatLngLiteral = { lat: 30, lng: -110 };
 	latitude: any;
 	longitude: any;
@@ -29,19 +26,6 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 		};
 		const autocomplete = new google.maps.places.Autocomplete(inputEl, options);
 
-		// navigator.geolocation.getCurrentPosition((position) => {
-		// 	this.latitude = position.coords.latitude;
-		// 	this.longitude = position.coords.longitude;
-
-		// 	this.map = new google.maps.Map(
-		// 		document.getElementById('map') as HTMLElement,
-		// 		{
-		// 			center: { lat: this.latitude, lng: this.longitude },
-		// 			zoom: 10,
-		// 		}
-		// 	);
-		// });
-
 		autocomplete.addListener('place_changed', () => {
 			this.ngZone.run(() => {
 				const place: google.maps.places.PlaceResult = autocomplete.getPlace();
@@ -60,13 +44,8 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 
 			this.map = new google.maps.Map(
 				document.getElementById('map') as HTMLElement,
-				{
-					center: { lat: this.latitude, lng: this.longitude },
-					zoom: 10,
-				}
+				{ center: { lat: this.latitude, lng: this.longitude }, zoom: 10 }
 			);
-
-			console.log(this.map);
 		});
 	}
 
