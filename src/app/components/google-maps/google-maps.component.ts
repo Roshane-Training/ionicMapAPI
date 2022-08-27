@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, NgZone, OnInit } from '@angular/core';
+import {
+	AfterViewInit,
+	Component,
+	ElementRef,
+	NgZone,
+	OnInit,
+	ViewChild,
+} from '@angular/core';
+import { Geolocation } from '@ionic-native/geolocation';
 
 @Component({
 	selector: 'app-google-maps',
@@ -8,17 +16,20 @@ import { AfterViewInit, Component, NgZone, OnInit } from '@angular/core';
 export class GoogleMapsComponent implements OnInit, AfterViewInit {
 	map!: google.maps.Map;
 	center: google.maps.LatLngLiteral = { lat: 30, lng: -110 };
-	latitude: any;
-	longitude: any;
+	latitude: any = 17.9962;
+	longitude: any = -76.8019;
 
-	constructor(private ngZone: NgZone) {}
+	@ViewChild('pac_input') pac_input: ElementRef<HTMLInputElement>;
+	@ViewChild('map') viewMap: ElementRef<HTMLDivElement>;
+
+	constructor(private ngZone: NgZone, private geolocation: Geolocation) {}
 
 	setPosition(latLng: google.maps.LatLngLiteral) {
 		this.map.setCenter(latLng);
 	}
 
 	initMap(): void {
-		const inputEl = document.getElementById('pac-input') as HTMLInputElement;
+		const inputEl = this.pac_input.nativeElement;
 		const options = {
 			componentRestrictions: { country: 'jm' },
 			fields: ['address_components', 'geometry', 'icon', 'name'],
@@ -37,19 +48,25 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	ngOnInit() {
-		navigator.geolocation.getCurrentPosition((position) => {
-			this.latitude = position.coords.latitude;
-			this.longitude = position.coords.longitude;
-
-			this.map = new google.maps.Map(
-				document.getElementById('map') as HTMLElement,
-				{ center: { lat: this.latitude, lng: this.longitude }, zoom: 10 }
-			);
-		});
-	}
+	ngOnInit() {}
 
 	ngAfterViewInit(): void {
-		this.initMap();
+		this.geolocation
+			.getCurrentPosition()
+			.then((resp) => {
+				this.map = new google.maps.Map(this.viewMap.nativeElement, {
+					center: { lat: resp.coords.latitude, lng: resp.coords.longitude },
+					zoom: 10,
+				});
+				this.initMap();
+			})
+			.catch((err) => {
+				console.error(err);
+				this.map = new google.maps.Map(this.viewMap.nativeElement, {
+					center: { lat: -76.8019, lng: 17.9962 },
+					zoom: 10,
+				});
+				this.initMap();
+			});
 	}
 }

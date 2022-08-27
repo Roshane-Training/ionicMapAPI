@@ -18,7 +18,7 @@ import { HttpClientModule } from '@angular/common/http';
 		AppRoutingModule,
 		FormsModule,
 		GoogleMapsModule,
-		HttpClientModule,
+		HttpClientModule
 	],
 	providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
 	bootstrap: [AppComponent],
