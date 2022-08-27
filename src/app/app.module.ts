@@ -9,6 +9,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { FormsModule } from '@angular/forms';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { HttpClientModule } from '@angular/common/http';
+import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 
 @NgModule({
 	declarations: [AppComponent],
@@ -20,7 +21,7 @@ import { HttpClientModule } from '@angular/common/http';
 		GoogleMapsModule,
 		HttpClientModule
 	],
-	providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+	providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, Geolocation],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}
