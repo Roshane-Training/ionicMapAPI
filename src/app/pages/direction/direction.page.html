@@ -4,9 +4,14 @@
 	</ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" style="background: white;">
 	<input type="text" name="location" #start />
 	<input type="text" name="location" #end />
+	<ion-chip>
+		Distance: {{cur_dir?.routes[0].legs[0].distance.text ?? 0}}
+	</ion-chip>
+	<br />
+	<ion-chip> Time: {{cur_dir?.routes[0].legs[0].duration.text ?? 0}} </ion-chip>
 	<div #map class="full"></div>
 </ion-content>
 

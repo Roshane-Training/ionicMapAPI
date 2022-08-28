@@ -17,8 +17,7 @@ export class DirectionPage implements OnInit, AfterViewInit {
 	@ViewChild('start') start: ElementRef<HTMLInputElement>;
 	@ViewChild('end') end: ElementRef<HTMLInputElement>;
 
-	startAddress: string;
-	endAddress: string;
+	cur_dir: any;
 
 	constructor(private ngZone: NgZone) {}
 	ngOnInit(): void {}
@@ -79,9 +78,14 @@ export class DirectionPage implements OnInit, AfterViewInit {
 					query: this.end.nativeElement.value.trim(),
 				},
 				travelMode: google.maps.TravelMode.DRIVING,
+				drivingOptions: {
+					departureTime: new Date(),
+				},
 			})
 			.then((response) => {
 				directionsRenderer.setDirections(response);
+				this.cur_dir = directionsRenderer.getDirections();
+				console.log(this.cur_dir);
 			})
 			.catch((e) => console.log(e));
 	}

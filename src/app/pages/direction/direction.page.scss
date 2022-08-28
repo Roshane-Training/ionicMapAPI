@@ -1,6 +1,6 @@
 .full {
 	width: 100vw;
-	height: 76vh;
+	height: 100vh;
 	margin-inline: auto;
 }
 
@@ -10,4 +10,13 @@ input[name="location"] {
 	padding-block: 20px;
 	width: 100%;
 	border-radius: 4px;
+}
+
+ion-content {
+	--offset-bottom: auto !important;
+	--overflow: hidden;
+	overflow: auto;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }
