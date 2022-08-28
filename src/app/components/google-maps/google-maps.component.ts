@@ -33,7 +33,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 		this.map.setCenter(latLng);
 	}
 
-	initMap(): void {
+	updateMap(): void {
 		const inputEl = this.pacInput.nativeElement;
 		const options = {
 			componentRestrictions: { country: 'jm' },
@@ -66,7 +66,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 						center: { lat: resp.coords.latitude, lng: resp.coords.longitude },
 						zoom: 15,
 					});
-					this.initMap();
+					this.updateMap();
 				})
 				.catch((err) => {
 					console.error(err);
@@ -74,7 +74,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 						center: { lat: -76.8019, lng: 17.9962 },
 						zoom: 15,
 					});
-					this.initMap();
+					this.updateMap();
 				});
 		} else {
 			navigator.geolocation.getCurrentPosition((position) => {

@@ -7,7 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 	styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-	page = { title: 'Google Maps Embeded API' };
+	page = { title: 'Google Maps API Demo' };
 
 	constructor() {}
 

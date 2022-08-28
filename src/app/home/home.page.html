@@ -4,8 +4,14 @@
 	</ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content [fullscreen]="true">
 	<div class="container">
 		<app-google-maps></app-google-maps>
 	</div>
 </ion-content>
+
+<ion-footer class="ion-no-border">
+	<ion-button routerLink="/direction" expand="full"
+		>Open Directions Demo</ion-button
+	>
+</ion-footer>

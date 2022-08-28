@@ -1,0 +1,15 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-title>Google Maps Direction Demo</ion-title>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+	<input type="text" name="location" #start />
+	<input type="text" name="location" #end />
+	<div #map class="full"></div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+	<ion-button routerLink="/" expand="full">Open Maps Demo</ion-button>
+</ion-footer>
