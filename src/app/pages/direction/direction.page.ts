@@ -33,7 +33,7 @@ export class DirectionPage implements OnInit, AfterViewInit {
 
 		const map = new google.maps.Map(this.map.nativeElement, {
 			zoom: 15,
-			center: { lat: 18, lng: -76 },
+			center: { lng: -76.8019, lat: 17.9962 },
 		});
 
 		directionsRenderer.setMap(map);

@@ -71,7 +71,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 				.catch((err) => {
 					console.error(err);
 					this.map = new google.maps.Map(this.viewMap.nativeElement, {
-						center: { lat: -76.8019, lng: 17.9962 },
+						center: { lng: this.longitude, lat: this.latitude },
 						zoom: 15,
 					});
 					this.updateMap();
