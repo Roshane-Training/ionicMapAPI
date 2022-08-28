@@ -15,13 +15,13 @@ import { Platform } from '@ionic/angular';
 	styleUrls: ['./google-maps.component.scss'],
 })
 export class GoogleMapsComponent implements OnInit, AfterViewInit {
+	@ViewChild('pac_input') pacInput: ElementRef<HTMLInputElement>;
+	@ViewChild('map') viewMap: ElementRef<HTMLDivElement>;
+
 	map!: google.maps.Map;
 	center: google.maps.LatLngLiteral = { lat: 30, lng: -110 };
 	latitude: any = 17.9962;
 	longitude: any = -76.8019;
-
-	@ViewChild('pac_input') pac_input: ElementRef<HTMLInputElement>;
-	@ViewChild('map') viewMap: ElementRef<HTMLDivElement>;
 
 	constructor(
 		private ngZone: NgZone,
@@ -33,8 +33,8 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 		this.map.setCenter(latLng);
 	}
 
-	initMap(): void {
-		const inputEl = this.pac_input.nativeElement;
+	updateMap(): void {
+		const inputEl = this.pacInput.nativeElement;
 		const options = {
 			componentRestrictions: { country: 'jm' },
 			fields: ['address_components', 'geometry', 'icon', 'name'],
@@ -66,7 +66,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 						center: { lat: resp.coords.latitude, lng: resp.coords.longitude },
 						zoom: 15,
 					});
-					this.initMap();
+					this.updateMap();
 				})
 				.catch((err) => {
 					console.error(err);
@@ -74,7 +74,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 						center: { lat: -76.8019, lng: 17.9962 },
 						zoom: 15,
 					});
-					this.initMap();
+					this.updateMap();
 				});
 		} else {
 			navigator.geolocation.getCurrentPosition((position) => {

@@ -19,9 +19,12 @@ import { Geolocation } from '@awesome-cordova-plugins/geolocation/ngx';
 		AppRoutingModule,
 		FormsModule,
 		GoogleMapsModule,
-		HttpClientModule
+		HttpClientModule,
 	],
-	providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, Geolocation],
+	providers: [
+		{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+		Geolocation,
+	],
 	bootstrap: [AppComponent],
 })
 export class AppModule {}
