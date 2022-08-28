@@ -17,7 +17,7 @@ export class DirectionPage implements OnInit, AfterViewInit {
 	@ViewChild('start') start: ElementRef<HTMLInputElement>;
 	@ViewChild('end') end: ElementRef<HTMLInputElement>;
 
-	cur_dir: any;
+	currentDirection: any;
 
 	constructor(private ngZone: NgZone) {}
 	ngOnInit(): void {}
@@ -28,7 +28,9 @@ export class DirectionPage implements OnInit, AfterViewInit {
 
 	initMap(): void {
 		const directionsService = new google.maps.DirectionsService();
-		const directionsRenderer = new google.maps.DirectionsRenderer();
+		const directionsRenderer = new google.maps.DirectionsRenderer({
+			draggable: true,
+		});
 
 		const map = new google.maps.Map(this.map.nativeElement, {
 			zoom: 15,
@@ -84,8 +86,8 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			})
 			.then((response) => {
 				directionsRenderer.setDirections(response);
-				this.cur_dir = directionsRenderer.getDirections();
-				console.log(this.cur_dir);
+				this.currentDirection = directionsRenderer.getDirections();
+				console.log(this.currentDirection);
 			})
 			.catch((e) => console.log(e));
 	}
