@@ -22,6 +22,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 	center: google.maps.LatLngLiteral = { lat: 30, lng: -110 };
 	latitude: any = 17.9962;
 	longitude: any = -76.8019;
+	autocomplete: google.maps.places.Autocomplete;
 
 	constructor(
 		private ngZone: NgZone,
@@ -33,29 +34,28 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 		this.map.setCenter(latLng);
 	}
 
-	updateMap(): void {
+	ngOnInit() {}
+
+	ngAfterViewInit(): void {
 		const inputEl = this.pacInput.nativeElement;
 		const options = {
 			componentRestrictions: { country: 'jm' },
 			fields: ['address_components', 'geometry', 'icon', 'name'],
 			strictBounds: false,
 		};
-		const autocomplete = new google.maps.places.Autocomplete(inputEl, options);
+		this.autocomplete = new google.maps.places.Autocomplete(inputEl, options);
 
-		autocomplete.addListener('place_changed', () => {
+		this.autocomplete.addListener('place_changed', () => {
 			this.ngZone.run(() => {
-				const place: google.maps.places.PlaceResult = autocomplete.getPlace();
+				const place: google.maps.places.PlaceResult =
+					this.autocomplete.getPlace();
 				this.latitude = place.geometry.location.lat();
 				this.longitude = place.geometry.location.lng();
 
 				this.setPosition({ lat: this.latitude, lng: this.longitude });
 			});
 		});
-	}
 
-	ngOnInit() {}
-
-	ngAfterViewInit(): void {
 		if (this.platform.is('android')) {
 			this.geolocation
 				.getCurrentPosition()
@@ -66,7 +66,6 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 						center: { lat: resp.coords.latitude, lng: resp.coords.longitude },
 						zoom: 15,
 					});
-					this.updateMap();
 				})
 				.catch((err) => {
 					console.error(err);
@@ -74,7 +73,6 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 						center: { lng: this.longitude, lat: this.latitude },
 						zoom: 15,
 					});
-					this.updateMap();
 				});
 		} else {
 			navigator.geolocation.getCurrentPosition((position) => {

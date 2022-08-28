@@ -1,13 +1,19 @@
 .full {
 	width: 100vw;
-	height: 76vh;
+	height: 100%;
 	margin-inline: auto;
+	z-index: -1;
 }
 
 input[name="location"] {
+	position: fixed;
+	top: 25%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	background-color: white;
-	padding-inline: 5px;
-	padding-block: 20px;
-	width: 100%;
-	border-radius: 4px;
+	padding: 5px;
+	width: 80%;
+	border-radius: 2px;
+	border: none;
+	box-shadow: 0 0 2px #0008;
 }
