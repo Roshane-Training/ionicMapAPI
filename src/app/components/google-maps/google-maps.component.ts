@@ -20,6 +20,9 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 
 	map!: google.maps.Map;
 	center: google.maps.LatLngLiteral = { lat: 30, lng: -110 };
+	marker = new google.maps.Marker({
+		animation: google.maps.Animation.DROP,
+	});
 	latitude: any = 17.9962;
 	longitude: any = -76.8019;
 	autocomplete: google.maps.places.Autocomplete;
@@ -32,6 +35,13 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 
 	setPosition(latLng: google.maps.LatLngLiteral) {
 		this.map.setCenter(latLng);
+		this.marker.setOptions({
+			position: {
+				lat: this.latitude,
+				lng: this.longitude,
+			},
+			map: this.map,
+		});
 	}
 
 	ngOnInit() {}
@@ -63,7 +73,10 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 					this.latitude = resp.coords.latitude;
 					this.longitude = resp.coords.longitude;
 					this.map = new google.maps.Map(this.viewMap.nativeElement, {
-						center: { lat: resp.coords.latitude, lng: resp.coords.longitude },
+						center: {
+							lat: resp.coords.latitude,
+							lng: resp.coords.longitude,
+						},
 						zoom: 15,
 					});
 				})
@@ -81,7 +94,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 
 				this.map = new google.maps.Map(this.viewMap.nativeElement, {
 					center: { lat: this.latitude, lng: this.longitude },
-					zoom: 10,
+					zoom: 15,
 				});
 			});
 		}

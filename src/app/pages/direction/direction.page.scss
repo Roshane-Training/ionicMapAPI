@@ -1,22 +1,28 @@
 .full {
 	width: 100vw;
-	height: 100vh;
+	height: 100%;
 	margin-inline: auto;
+	z-index: -1;
 }
 
 input[name="location"] {
 	background-color: white;
-	padding-inline: 5px;
-	padding-block: 20px;
+	color: black;
+	margin-top: 5px;
+	padding: 10px 5px;
 	width: 100%;
-	border-radius: 4px;
+	border-radius: 2px;
+	border: none;
+	box-shadow: 0 0 2px #0008;
 }
 
-ion-content {
-	--offset-bottom: auto !important;
-	--overflow: hidden;
-	overflow: auto;
-	&::-webkit-scrollbar {
-		display: none;
-	}
+.float_mid {
+	position: fixed;
+	top: 30%;
+	left: 0;
+}
+
+ion-chip {
+	--background: #0005;
+	--color: white;
 }

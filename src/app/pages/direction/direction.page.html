@@ -4,16 +4,102 @@
 	</ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" style="background: white">
-	<input type="text" name="location" #start />
-	<input type="text" name="location" #end />
-	<ion-chip>
-		Distance: {{currentDirection?.routes[0].legs[0].distance.text ?? 0}}
-	</ion-chip>
-	<br />
-	<ion-chip>
-		Time: {{currentDirection?.routes[0].legs[0].duration.text ?? 0}}
-	</ion-chip>
+<ion-content
+	[fullscreen]="true"
+	class="position: relative"
+	style="background: white"
+>
+	<div class="float_mid">
+		<ion-chip>
+			Distance: {{currentDirection?.routes[0].legs[0].distance.text ?? "0 mi"}}
+		</ion-chip>
+		<br />
+		<ion-chip>
+			Time: {{currentDirection?.routes[0].legs[0].duration.text ?? "0 sec"}}
+		</ion-chip>
+	</div>
+	<ion-fab vertical="bottom" horizontal="start" slot="fixed">
+		<ion-fab-button>
+			<ion-icon name="search"></ion-icon>
+		</ion-fab-button>
+		<ion-fab-list side="top" style="width: 70vw">
+			<input type="text" name="location" #end />
+			<input type="text" name="location" #start />
+		</ion-fab-list>
+	</ion-fab>
+	<ion-fab vertical="bottom" horizontal="center" slot="fixed">
+		<ion-fab-button>
+			<ion-icon name="pin"></ion-icon>
+		</ion-fab-button>
+		<ion-fab-list side="top">
+			<ion-fab-button id="open-modal2"
+				><ion-icon name="map"></ion-icon
+			></ion-fab-button>
+			<ion-fab-button id="open-modal"
+				><ion-icon name="add"></ion-icon
+			></ion-fab-button>
+		</ion-fab-list>
+		<ion-modal #modal trigger="open-modal">
+			<ng-template>
+				<ion-header>
+					<ion-toolbar>
+						<ion-buttons slot="start">
+							<ion-button (click)="modal.dismiss()">Cancel</ion-button>
+						</ion-buttons>
+						<ion-buttons slot="end">
+							<ion-button
+								(click)="m_name.value !== '' && end.value !== '' ? addMarker(m_name.value) && modal.dismiss() : null"
+								[strong]="true"
+								>Confirm</ion-button
+							>
+						</ion-buttons>
+					</ion-toolbar>
+				</ion-header>
+				<ion-content class="ion-padding">
+					<ion-item lines="none">
+						<ion-label position="stacked"
+							>Add marker to collection</ion-label
+						>
+						<ion-input
+							#m_name
+							type="text"
+							placeholder="Marker name"
+						></ion-input>
+					</ion-item>
+				</ion-content>
+			</ng-template>
+		</ion-modal>
+		<ion-modal #modal2 trigger="open-modal2">
+			<ng-template>
+				<ion-header>
+					<ion-toolbar>
+						<ion-buttons slot="start">
+							<ion-button (click)="modal2.dismiss()">Cancel</ion-button>
+							<ion-title>Saved Markers</ion-title>
+						</ion-buttons>
+					</ion-toolbar>
+				</ion-header>
+				<ion-content class="ion-padding">
+					<div lines="none" *ngIf="collection.length > 0">
+						<ion-label
+							>Choose from saved markers</ion-label
+						>
+						<ion-item
+							lines="none"
+							*ngFor="let place of collection"
+							(click)="modal2.dismiss() && setDestination(place.place)"
+							style="cursor: pointer"
+							>{{place.name}}</ion-item
+						>
+					</div>
+					<div *ngIf="collection.length == 0">
+						<ion-title slot="start">There's nothing here, yet</ion-title>
+						<ion-img slot="end" src="assets/nomap.webp"></ion-img>
+					</div>
+				</ion-content>
+			</ng-template>
+		</ion-modal>
+	</ion-fab>
 	<div #map class="full"></div>
 </ion-content>
 
