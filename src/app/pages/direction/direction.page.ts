@@ -31,6 +31,7 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			name: 'First Location',
 		},
 	];
+	proxAlert = 30;
 
 	constructor(private ngZone: NgZone) {}
 	ngOnInit(): void {}
@@ -38,6 +39,8 @@ export class DirectionPage implements OnInit, AfterViewInit {
 	ngAfterViewInit() {
 		this.initMap();
 	}
+
+	onChangeHandler: Function;
 
 	addMarker(name) {
 		this.collection.push({ place: this.markerB.getPosition(), name: name });
@@ -49,10 +52,22 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			.geocode({ location: place })
 			.then((resp) => {
 				this.end.nativeElement.value = resp.results[0].formatted_address;
+				if (this.start.nativeElement.value !== '')
+					this.onChangeHandler(
+						this.start.nativeElement.value.trim(),
+						this.end.nativeElement.value.trim()
+					);
 			})
 			.catch((e) => {
 				//Error handling
 			});
+	}
+
+	proximityCheck(distance: number) {
+		if (distance <= this.proxAlert) {
+			//Alert
+			console.error('HEY!');
+		}
 	}
 
 	initMap(): void {
@@ -67,10 +82,11 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			map: this.map,
 		});
 
-		const onChangeHandler = (
+		this.onChangeHandler = (
 			originQuery: string,
 			destinationQuery: string
 		) => {
+			
 			this.calculateAndDisplayRoute(
 				directionsService,
 				directionsRenderer,
@@ -99,20 +115,11 @@ export class DirectionPage implements OnInit, AfterViewInit {
 				const place = autocompleteA.getPlace();
 
 				if (this.end.nativeElement.value !== '') {
-					onChangeHandler(
+					this.onChangeHandler(
 						this.start.nativeElement.value.trim(),
 						this.end.nativeElement.value.trim()
 					);
 				}
-
-				this.markerA.setOptions({
-					position: {
-						lat: place.geometry.location.lat(),
-						lng: place.geometry.location.lng(),
-					},
-					map: this.map,
-				});
-
 				// map.panTo(this.markerA.getPosition() as google.maps.LatLng);
 			});
 		});
@@ -122,21 +129,11 @@ export class DirectionPage implements OnInit, AfterViewInit {
 				const place = autocompleteB.getPlace();
 
 				if (this.start.nativeElement.value !== '') {
-					onChangeHandler(
+					this.onChangeHandler(
 						this.start.nativeElement.value.trim(),
 						this.end.nativeElement.value.trim()
 					);
 				}
-
-				this.markerB.setOptions({
-					position: {
-						lat: place.geometry.location.lat(),
-						lng: place.geometry.location.lng(),
-					},
-					map: this.map,
-					draggable: true,
-				});
-
 				// map.panTo(this.markerB.getPosition() as google.maps.LatLng);
 			});
 		});
@@ -156,7 +153,9 @@ export class DirectionPage implements OnInit, AfterViewInit {
 						);
 					}
 				})
-				.catch();
+				.catch((err) => {
+					//Error handling
+				});
 		});
 		// this.markerA.addListener('dragend', () => {
 		// 	const latLng = this.markerA.getPosition();
@@ -199,8 +198,23 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			.then((response) => {
 				directionsRenderer.setDirections(response);
 				directionsRenderer.setOptions({ suppressMarkers: true });
-				this.currentDirection = directionsRenderer.getDirections();
+				this.markerA.setOptions({
+					position: {
+						lat: response.routes[0].legs[0].start_location.lat(),
+						lng: response.routes[0].legs[0].start_location.lng(),
+					},
+					map: this.map,
+				});
+				this.markerB.setOptions({
+					position: {
+						lat: response.routes[0].legs[0].end_location.lat(),
+						lng: response.routes[0].legs[0].end_location.lng(),
+					},
+					map: this.map,
+				});
+				this.currentDirection = response;
 				this.map.setCenter(this.markerB.getPosition());
+				this.proximityCheck(response.routes[0].legs[0].distance.value);
 			})
 			.catch((e) => console.log(e));
 	}
