@@ -9,12 +9,11 @@ interface Sound<T> {
 })
 export class audioService {
 	private sounds: Sound<Function>[] = [];
-	private forceWebAudio: boolean = false;
 
 	constructor() {}
 
 	preload(key: string, asset: string): void {
-		let audio = new Audio('assets/sounds/proximity.wav');
+		let audio = new Audio(asset);
 		this.sounds.push({ key: key, asset: () => {
 			audio.play();
 		} });
