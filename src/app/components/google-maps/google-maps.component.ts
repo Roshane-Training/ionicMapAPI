@@ -33,6 +33,10 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 		private platform: Platform
 	) {}
 
+	/**
+	 * Sets a position with a marker on the map
+	 * @param latLng Latitude,Longitude object
+	 */
 	setPosition(latLng: google.maps.LatLngLiteral) {
 		this.map.setCenter(latLng);
 		this.marker.setOptions({
@@ -47,6 +51,7 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 	ngOnInit() {}
 
 	ngAfterViewInit(): void {
+		// Create a new autocomplete object and provide the InputEl to it
 		const inputEl = this.pacInput.nativeElement;
 		const options = {
 			componentRestrictions: { country: 'jm' },
@@ -55,23 +60,27 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 		};
 		this.autocomplete = new google.maps.places.Autocomplete(inputEl, options);
 
+		// Add listener for when a new address is selected and the place changes
 		this.autocomplete.addListener('place_changed', () => {
 			this.ngZone.run(() => {
 				const place: google.maps.places.PlaceResult =
 					this.autocomplete.getPlace();
 				this.latitude = place.geometry.location.lat();
 				this.longitude = place.geometry.location.lng();
-
+				// Function that sets marker on the map
 				this.setPosition({ lat: this.latitude, lng: this.longitude });
 			});
 		});
 
+		// Checks if the app is running on android
 		if (this.platform.is('android')) {
+			//Use geolocation cordova plugin to get current position of device
 			this.geolocation
 				.getCurrentPosition()
 				.then((resp) => {
 					this.latitude = resp.coords.latitude;
 					this.longitude = resp.coords.longitude;
+					// Initialize the map using the div element and these options
 					this.map = new google.maps.Map(this.viewMap.nativeElement, {
 						center: {
 							lat: resp.coords.latitude,
@@ -82,16 +91,18 @@ export class GoogleMapsComponent implements OnInit, AfterViewInit {
 				})
 				.catch((err) => {
 					console.error(err);
+					// If there's an error, use some default values.
 					this.map = new google.maps.Map(this.viewMap.nativeElement, {
 						center: { lng: this.longitude, lat: this.latitude },
 						zoom: 15,
 					});
 				});
 		} else {
+			// On a non-android system we'll try to use the browser version
 			navigator.geolocation.getCurrentPosition((position) => {
 				this.latitude = position.coords.latitude;
 				this.longitude = position.coords.longitude;
-
+				// Initialize the map using the div element and these options
 				this.map = new google.maps.Map(this.viewMap.nativeElement, {
 					center: { lat: this.latitude, lng: this.longitude },
 					zoom: 15,

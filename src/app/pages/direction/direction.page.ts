@@ -30,6 +30,7 @@ export class DirectionPage implements OnInit, AfterViewInit {
 	proxAlert = 30;
 
 	constructor(private ngZone: NgZone, private audioPlayer: audioService) {}
+
 	ngOnInit(): void {
 		this.audioPlayer.preload('proximity', 'assets/sounds/proximity.wav');
 	}
@@ -38,8 +39,18 @@ export class DirectionPage implements OnInit, AfterViewInit {
 		this.initMap();
 	}
 
+	/**
+	 * Handler for updating directions in response to events
+	 * @param originQuery Address of origin
+	 * @param destinationQuery Address of destination
+	 */
 	onChangeHandler: Function;
 
+	/**
+	 * Adds a marker to the collection if it'sa part of a direction response
+	 * @param name Name of the new marker
+	 * @returns true - if the marker existed and could be added to collection
+	 */
 	addMarker(name) {
 		if (this.markerB.getPosition()) {
 			this.collection.push({
@@ -50,7 +61,12 @@ export class DirectionPage implements OnInit, AfterViewInit {
 		return true;
 	}
 
+	/**
+	 * Special handler for activating a marker from collections
+	 * @param place place object returned by autocomplete input fields
+	 */
 	setDestination(place: google.maps.LatLng) {
+		// Find the address of a certain latitude and longitude
 		new google.maps.Geocoder()
 			.geocode({ location: place })
 			.then((resp) => {
@@ -66,6 +82,10 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			});
 	}
 
+	/**
+	 * Checks the distance of markerB from markerA, if it's <= a set amount, an alert will play
+	 * @param distance Distance value in metric units
+	 */
 	proximityCheck(distance: number) {
 		if (distance <= this.proxAlert) {
 			this.audioPlayer.play('proximity');
@@ -73,15 +93,20 @@ export class DirectionPage implements OnInit, AfterViewInit {
 		}
 	}
 
+	/**
+	 * Initializes the map and related processes
+	 */
 	initMap(): void {
+		// Initialize the map using the div element and these options
 		this.map = new google.maps.Map(this.mapDiv.nativeElement, {
 			zoom: 15,
 			center: { lng: -76.8019, lat: 17.9962 },
 		});
 
+		// Directions objects needed to create and manage the directions object
 		const directionsService = new google.maps.DirectionsService();
+		// Provides mad to renderer
 		const directionsRenderer = new google.maps.DirectionsRenderer({
-			draggable: true,
 			map: this.map,
 		});
 
@@ -97,12 +122,14 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			);
 		};
 
+		// Set places options, such as resticting it to jamaica
 		const options = {
 			componentRestrictions: { country: 'jm' },
 			fields: ['address_components', 'geometry', 'icon', 'name'],
 			strictBounds: false,
 		};
 
+		// Create the autocomplete objects and give them input elements to manage
 		const autocompleteA = new google.maps.places.Autocomplete(
 			this.start.nativeElement,
 			options
@@ -112,36 +139,33 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			options
 		);
 
+		// Listen for the event of the place being updated, and respond with update logic
 		autocompleteA.addListener('place_changed', () => {
 			this.ngZone.run(() => {
-				const place = autocompleteA.getPlace();
-
 				if (this.end.nativeElement.value !== '') {
 					this.onChangeHandler(
 						this.start.nativeElement.value.trim(),
 						this.end.nativeElement.value.trim()
 					);
 				}
-				// map.panTo(this.markerA.getPosition() as google.maps.LatLng);
 			});
 		});
 
 		autocompleteB.addListener('place_changed', () => {
 			this.ngZone.run(() => {
-				const place = autocompleteB.getPlace();
-
 				if (this.start.nativeElement.value !== '') {
 					this.onChangeHandler(
 						this.start.nativeElement.value.trim(),
 						this.end.nativeElement.value.trim()
 					);
 				}
-				// map.panTo(this.markerB.getPosition() as google.maps.LatLng);
 			});
 		});
 
+		// Add gragging event end event listener to update directions when a drag is complete
 		this.markerB.addListener('dragend', () => {
 			const latLng = this.markerB.getPosition();
+			// Find address with latitude and longitude
 			new google.maps.Geocoder()
 				.geocode({ location: latLng })
 				.then((resp) => {
@@ -172,6 +196,13 @@ export class DirectionPage implements OnInit, AfterViewInit {
 		// });
 	}
 
+	/**
+	 * Prepare and render new route information
+	 * @param directionsService 
+	 * @param directionsRenderer 
+	 * @param origin Address of origin
+	 * @param destination Address of destination
+	 */
 	calculateAndDisplayRoute(
 		directionsService: google.maps.DirectionsService,
 		directionsRenderer: google.maps.DirectionsRenderer,
@@ -186,6 +217,7 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			| google.maps.LatLngLiteral
 			| google.maps.Place
 	) {
+		// Create the directions request
 		directionsService
 			.route({
 				origin,
@@ -198,8 +230,10 @@ export class DirectionPage implements OnInit, AfterViewInit {
 				},
 			})
 			.then((response) => {
+				// Use directions response to set the direction values in the directions renderer
 				directionsRenderer.setDirections(response);
 				directionsRenderer.setOptions({ suppressMarkers: true });
+				// Establish markers at point A and B
 				this.markerA.setOptions({
 					position: {
 						lat: response.routes[0].legs[0].start_location.lat(),
@@ -214,8 +248,11 @@ export class DirectionPage implements OnInit, AfterViewInit {
 					},
 					map: this.map,
 				});
+				// Save latest directions response
 				this.currentDirection = response;
+				// Set map centre
 				this.map.setCenter(this.markerB.getPosition());
+				// Check proximity of directions destination
 				this.proximityCheck(response.routes[0].legs[0].distance.value);
 			})
 			.catch((e) => console.log(e));
