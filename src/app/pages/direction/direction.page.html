@@ -11,7 +11,8 @@
 >
 	<div class="float_mid">
 		<ion-chip>
-			Distance: {{currentDirection?.routes[0].legs[0].distance.text ?? "0 mi"}}
+			Distance: {{currentDirection?.routes[0].legs[0].distance.text ?? "0
+			mi"}}
 		</ion-chip>
 		<br />
 		<ion-chip>
@@ -81,9 +82,7 @@
 				</ion-header>
 				<ion-content class="ion-padding">
 					<div lines="none" *ngIf="collection.length > 0">
-						<ion-label
-							>Choose from saved markers</ion-label
-						>
+						<ion-label>Choose from saved markers</ion-label>
 						<ion-item
 							lines="none"
 							*ngFor="let place of collection"

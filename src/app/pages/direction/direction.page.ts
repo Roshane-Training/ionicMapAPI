@@ -29,10 +29,7 @@ export class DirectionPage implements OnInit, AfterViewInit {
 	collection: { place: google.maps.LatLng; name: string }[] = [];
 	proxAlert = 30;
 
-	constructor(
-		private ngZone: NgZone,
-		private audioPlayer: audioService
-	) {}
+	constructor(private ngZone: NgZone, private audioPlayer: audioService) {}
 	ngOnInit(): void {
 		this.audioPlayer.preload('proximity', 'assets/sounds/proximity.wav');
 	}
@@ -44,7 +41,12 @@ export class DirectionPage implements OnInit, AfterViewInit {
 	onChangeHandler: Function;
 
 	addMarker(name) {
-		this.collection.push({ place: this.markerB.getPosition(), name: name });
+		if (this.markerB.getPosition()) {
+			this.collection.push({
+				place: this.markerB.getPosition(),
+				name: name,
+			});
+		} else return false;
 		return true;
 	}
 
