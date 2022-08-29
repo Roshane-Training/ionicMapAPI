@@ -6,6 +6,7 @@ import {
 	OnInit,
 	ViewChild,
 } from '@angular/core';
+import { audioService } from 'src/app/services/audio.service';
 
 @Component({
 	selector: 'app-direction',
@@ -25,16 +26,16 @@ export class DirectionPage implements OnInit, AfterViewInit {
 		label: 'D',
 		animation: google.maps.Animation.DROP,
 	});
-	collection: { place: google.maps.LatLng; name: string }[] = [
-		{
-			place: new google.maps.LatLng({ lng: -76.8019, lat: 17.9962 }),
-			name: 'First Location',
-		},
-	];
+	collection: { place: google.maps.LatLng; name: string }[] = [];
 	proxAlert = 30;
 
-	constructor(private ngZone: NgZone) {}
-	ngOnInit(): void {}
+	constructor(
+		private ngZone: NgZone,
+		private audioPlayer: audioService
+	) {}
+	ngOnInit(): void {
+		this.audioPlayer.preload('proximity', 'assets/sounds/proximity.wav');
+	}
 
 	ngAfterViewInit() {
 		this.initMap();
@@ -65,8 +66,8 @@ export class DirectionPage implements OnInit, AfterViewInit {
 
 	proximityCheck(distance: number) {
 		if (distance <= this.proxAlert) {
+			this.audioPlayer.play('proximity');
 			//Alert
-			console.error('HEY!');
 		}
 	}
 
@@ -86,7 +87,6 @@ export class DirectionPage implements OnInit, AfterViewInit {
 			originQuery: string,
 			destinationQuery: string
 		) => {
-			
 			this.calculateAndDisplayRoute(
 				directionsService,
 				directionsRenderer,
